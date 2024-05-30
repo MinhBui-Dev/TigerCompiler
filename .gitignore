@@ -31,3 +31,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Test Files ###
+phase1_testfiles_v1/
