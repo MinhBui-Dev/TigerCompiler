@@ -2,12 +2,12 @@ grammar Tiger;
 
 /* Lexer Rules */
 /* Keywords */
-Array: 'array';
-Begin: 'begin';
-Break: 'break';
+ARRAY: 'array';
+BEGIN: 'begin';
+BREAK: 'break';
 DO: 'do';
-Else: 'else';
-End: 'end';
+ELSE: 'else';
+END: 'end';
 ENDDO: 'enddo';
 ENDIF: 'endif';
 FOR: 'for';
