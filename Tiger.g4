@@ -1,5 +1,8 @@
 grammar Tiger;
 
+@header {
+    package antlr;
+}
 /* Lexer Rules */
 /* Keywords */
 ARRAY: 'array';
