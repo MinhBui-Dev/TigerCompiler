@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   #   vagrant plugin install vagrant-vbguest
   #
   config.vm.provider "virtualbox" do |vb|
-    vb.gui = true
+    vb.gui = false
     vb.cpus = 2
     vb.name = "Compiler"
   end
