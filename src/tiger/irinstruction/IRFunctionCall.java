@@ -24,9 +24,9 @@ public class IRFunctionCall extends IRInstruction{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if(hasReturn){
-            sb.append("\t\tcallr, "+returnVar+", "+functionName+args);
+            sb.append("\t\tcallr, ").append(returnVar).append(", ").append(functionName).append(args);
         } else {
-            sb.append("\t\tcall, "+functionName+args);
+            sb.append("\t\tcall, ").append(functionName).append(args);
         }
         sb.append(System.lineSeparator());
         return sb.toString();

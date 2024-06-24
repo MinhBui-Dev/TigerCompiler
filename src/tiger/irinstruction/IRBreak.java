@@ -1,7 +1,7 @@
 package tiger.irinstruction;
 
 public class IRBreak extends IRInstruction {
-    private String endLabel;
+    private final String endLabel;
 
     public IRBreak(String label) {
         this.endLabel = label;

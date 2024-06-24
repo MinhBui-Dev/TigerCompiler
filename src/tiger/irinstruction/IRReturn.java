@@ -16,7 +16,7 @@ public class IRReturn extends IRInstruction {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (hasReturnValue) {
-            sb.append("\t\treturn, "+value+", ,");
+            sb.append("\t\treturn, ").append(value).append(", ,");
         } else {
             sb.append("\t\treturn, , ,");
         }

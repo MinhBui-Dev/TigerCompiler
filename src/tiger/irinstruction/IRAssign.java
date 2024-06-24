@@ -24,10 +24,10 @@ public class IRAssign extends IRInstruction {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if(arrayAssign){
-            sb.append("\t\tassign, "+target+", "+source+", "+valueArray);
+            sb.append("\t\tassign, ").append(target).append(", ").append(source).append(", ").append(valueArray);
 
         } else {
-            sb.append("\t\tassign, "+target+", "+source+",");
+            sb.append("\t\tassign, ").append(target).append(", ").append(source).append(",");
         }
         sb.append(System.lineSeparator());
         return sb.toString();

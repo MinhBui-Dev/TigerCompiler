@@ -1,9 +1,9 @@
 package tiger.irinstruction;
 
 public class IRArrayLoad extends IRInstruction {
-    private String result;
-    private String array;
-    private String index;
+    private final String result;
+    private final String array;
+    private final String index;
 
     public IRArrayLoad(String result, String array, String index) {
         this.result = result;
@@ -14,9 +14,8 @@ public class IRArrayLoad extends IRInstruction {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\t\tarray_load, "+ result +", "+array+", "+index);
-        sb.append(System.lineSeparator());
-        return sb.toString();
+        String sb = "\t\tarray_load, " + result + ", " + array + ", " + index +
+                System.lineSeparator();
+        return sb;
     }
 }

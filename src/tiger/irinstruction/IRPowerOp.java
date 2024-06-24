@@ -18,21 +18,21 @@ public class IRPowerOp extends IRInstruction {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\t\tassign, "+result+", 1");
+        sb.append("\t\tassign, ").append(result).append(", 1");
         sb.append(System.lineSeparator());
-        sb.append("\t\tbreq, "+exponent+", 0, "+endLabel);
+        sb.append("\t\tbreq, ").append(exponent).append(", 0, ").append(endLabel);
         sb.append(System.lineSeparator());
-        sb.append("\t"+startLabel+":");
+        sb.append("\t").append(startLabel).append(":");
         sb.append(System.lineSeparator());
-        sb.append("\t\tmult, " + result + ", " + base + ", " + result);
+        sb.append("\t\tmult, ").append(result).append(", ").append(base).append(", ").append(result);
         sb.append(System.lineSeparator());
-        sb.append("\t\tsub, "+ exponent + ", 1, " + exponent);
+        sb.append("\t\tsub, ").append(exponent).append(", 1, ").append(exponent);
         sb.append(System.lineSeparator());
-        sb.append("\t\tbreq, "+exponent+", 0, "+endLabel);
+        sb.append("\t\tbreq, ").append(exponent).append(", 0, ").append(endLabel);
         sb.append(System.lineSeparator());
-        sb.append("\t\tbrneq, "+exponent+", 0, "+startLabel);
+        sb.append("\t\tbrneq, ").append(exponent).append(", 0, ").append(startLabel);
         sb.append(System.lineSeparator());
-        sb.append("\t"+endLabel+":");
+        sb.append("\t").append(endLabel).append(":");
         sb.append(System.lineSeparator());
         return sb.toString();
     }

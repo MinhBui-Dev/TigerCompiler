@@ -1,10 +1,10 @@
 package tiger.irinstruction;
 
 public class IRBinaryOp extends IRInstruction {
-    private String op;
-    private String left;
-    private String right;
-    private String result;
+    private final String op;
+    private final String left;
+    private final String right;
+    private final String result;
 
     public IRBinaryOp(String op, String left, String right, String result) {
         this.op = op;
@@ -18,27 +18,27 @@ public class IRBinaryOp extends IRInstruction {
         StringBuilder sb = new StringBuilder();
         switch (op) {
             case "+":
-                sb.append("\t\tadd, " + left + ", " + right + ", " + result);
+                sb.append("\t\tadd, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
             case "-":
-                sb.append("\t\tsub, " + left + ", " + right + ", " + result);
+                sb.append("\t\tsub, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
             case "*":
-                sb.append("\t\tmult, " + left + ", " + right + ", " + result);
+                sb.append("\t\tmult, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
             case "/":
-                sb.append("\t\tdiv, " + left + ", " + right + ", " + result);
+                sb.append("\t\tdiv, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
             case "&":
-                sb.append("\t\tand, " + left + ", " + right + ", " + result);
+                sb.append("\t\tand, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
             case "|":
-                sb.append("\t\tor, " + left + ", " + right + ", " + result);
+                sb.append("\t\tor, ").append(left).append(", ").append(right).append(", ").append(result);
                 sb.append(System.lineSeparator());
                 break;
         }
