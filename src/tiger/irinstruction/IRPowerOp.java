@@ -17,7 +17,7 @@ public class IRPowerOp extends IRInstruction {
 
     @Override
     public String toString() {
-        String sb = "\t\tassign, " + result + ", 1" +
+        return "\t\tassign, " + result + ", 1" +
                 System.lineSeparator() +
                 "\t\tbreq, " + exponent + ", 0, " + endLabel +
                 System.lineSeparator() +
@@ -33,6 +33,5 @@ public class IRPowerOp extends IRInstruction {
                 System.lineSeparator() +
                 "\t" + endLabel + ":" +
                 System.lineSeparator();
-        return sb;
     }
 }
