@@ -65,99 +65,69 @@ COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 WS: [ \t\r\n]+ -> skip;
 
 /* Parser Rules */
-tiger_program: PROGRAM ID LET declaration_segment BEGIN funct_list? END EOF;
+tiger_program: PROGRAM ID LET declaration_segment BEGIN funct_list END EOF;
 
-declaration_segment: type_declaration_list? var_declaration_list?;
+declaration_segment: type_declaration_list var_declaration_list;
 
-type_declaration_list: type_declaration type_declaration_list?;
+type_declaration_list: type_declaration*;
+
+var_declaration_list: var_declaration*;
+
+funct_list: funct*;
 
 type_declaration: TYPE ID TASSIGN type SEMICOLON;
 
-type: base_type #BaseType | ARRAY OPENBRACK INTLIT CLOSEBRACK OF base_type #ArrayType | ID #UserType;
+type: base_type                                         # type_base
+    | ARRAY OPENBRACK INTLIT CLOSEBRACK OF base_type    # type_array
+    | ID                                                # type_id;
 
 base_type: INT;
-
-var_declaration_list: var_declaration var_declaration_list?;
 
 var_declaration: storage_class id_list COLON type optional_init? SEMICOLON;
 
 storage_class: VAR | STATIC;
 
-id_list: ID id_list_tail?;
-
-id_list_tail: COMMA id_list;
-
+id_list: ID (COMMA ID)*;
 optional_init: ASSIGN const;
 
-funct_list: funct funct_list?;
+funct: FUNCTION ID OPENPAREN param_list? CLOSEPAREN ret_type BEGIN stat_seq END;
 
-funct: FUNCTION ID OPENPAREN param_list? CLOSEPAREN ret_type? BEGIN stat_seq END;
-
-param_list: param param_list_tail?;
+param_list: param (COMMA param)* ;
 
 param: ID COLON type ;
 
-param_list_tail: COMMA param param_list_tail?;
+ret_type: (COLON type)?;
 
-ret_type: COLON type;
+stat_seq: (statNode)+ ;
 
-stat_seq: stat stat_seq_tail?;
-
-stat_seq_tail: stat_seq;
-
-stat: value ASSIGN expr SEMICOLON                               #AssignStat
-    | IF expr THEN stat_seq if_statement_tail                   #IfStat
-    | WHILE expr DO stat_seq ENDDO SEMICOLON                    #WhileStat
-    | FOR ID ASSIGN expr TO expr DO stat_seq ENDDO SEMICOLON    #ForStat
-    | optprefix? ID OPENPAREN expr_list? CLOSEPAREN SEMICOLON   #FunctCallStat
-    | BREAK SEMICOLON                                           #BreakStat
-    | RETURN optreturn? SEMICOLON                               #ReturnStat
-    | LET declaration_segment BEGIN stat_seq END                #LetStat
+statNode: value ASSIGN expr SEMICOLON                                           #AssignStat
+    | IF expr THEN stat_seq ENDIF SEMICOLON                                     #IfStat
+    | IF expr THEN lblock=stat_seq ELSE rblock=stat_seq ENDIF SEMICOLON         #IfElseStat
+    | WHILE expr DO stat_seq ENDDO SEMICOLON                                    #WhileStat
+    | FOR ID ASSIGN start=expr TO end=expr DO stat_seq ENDDO SEMICOLON          #ForStat
+    | (optprefix)? ID OPENPAREN expr_list CLOSEPAREN SEMICOLON                   #FunctCallStat
+    | BREAK SEMICOLON                                                           #BreakStat
+    | RETURN optreturn? SEMICOLON                                               #ReturnStat
+    | LET declaration_segment BEGIN stat_seq END                                #LetStat
     ;
-
-if_statement_tail: ENDIF SEMICOLON
-    | ELSE stat_seq ENDIF SEMICOLON;
 
 optreturn: expr;
 
 optprefix: value ASSIGN;
 
-expr_list: expr expr_list_tail?;
+expr_list: (expr (COMMA expr)*)?;
 
-expr_list_tail: COMMA expr expr_list_tail?;
-
-expr: and_expr expr_tail?;
-
-expr_tail: OR and_expr expr_tail?;
-
-and_expr: comp_expr and_expr_tail?;
-
-and_expr_tail: AND comp_expr and_expr_tail?;
-
-comp_expr: term comp_expr_tail?;
-
-comp_expr_tail: comp_op term comp_expr_tail?;
-
-comp_op: EQUAL | NEQUAL | LESS | GREAT | LESSEQ | GREATEQ;
-
-term: factor term_tail?;
-
-term_tail: (PLUS|MINUS) factor term_tail?;
-
-factor: atom factor_tail?;
-
-factor_tail: (MULT|DIV) atom factor_tail?;
-
-atom: base atom_tail?;
-
-atom_tail: POW atom;
-
-base: OPENPAREN expr CLOSEPAREN
-    | value
-    | const;
+expr: OPENPAREN expr CLOSEPAREN                                         #ParenExpr
+    |<assoc=right> expr POW expr                                        #PowerExpr
+    | expr (MULT|DIV) expr                                              #MultExpr
+    | expr (PLUS|MINUS) expr                                            #AddExpr
+    | expr (EQUAL | NEQUAL | LESS | GREAT | LESSEQ | GREATEQ) expr      #CompExpr
+    | expr AND expr                                                     #AndExpr
+    | expr OR expr                                                      #OrExpr
+    | value                                                             #ValueExpr
+    | const                                                             #ConstExpr;
 
 const: INTLIT;
 
-value: ID value_tail?; // Variable access
-
-value_tail: OPENBRACK expr CLOSEBRACK; // Array access
+value: ID #VariableAccess
+     | ID OPENBRACK expr CLOSEBRACK #ArrayAccess;
