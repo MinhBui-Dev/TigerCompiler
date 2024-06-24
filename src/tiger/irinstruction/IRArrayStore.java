@@ -14,8 +14,7 @@ public class IRArrayStore extends IRInstruction {
 
     @Override
     public String toString() {
-        String sb = "\t\tarray_store, " + array + ", " + index + ", " + value +
+        return "\t\tarray_store, " + array + ", " + index + ", " + value +
                 System.lineSeparator();
-        return sb;
     }
 }

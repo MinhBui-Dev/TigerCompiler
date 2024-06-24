@@ -17,23 +17,22 @@ public class IRPowerOp extends IRInstruction {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\t\tassign, ").append(result).append(", 1");
-        sb.append(System.lineSeparator());
-        sb.append("\t\tbreq, ").append(exponent).append(", 0, ").append(endLabel);
-        sb.append(System.lineSeparator());
-        sb.append("\t").append(startLabel).append(":");
-        sb.append(System.lineSeparator());
-        sb.append("\t\tmult, ").append(result).append(", ").append(base).append(", ").append(result);
-        sb.append(System.lineSeparator());
-        sb.append("\t\tsub, ").append(exponent).append(", 1, ").append(exponent);
-        sb.append(System.lineSeparator());
-        sb.append("\t\tbreq, ").append(exponent).append(", 0, ").append(endLabel);
-        sb.append(System.lineSeparator());
-        sb.append("\t\tbrneq, ").append(exponent).append(", 0, ").append(startLabel);
-        sb.append(System.lineSeparator());
-        sb.append("\t").append(endLabel).append(":");
-        sb.append(System.lineSeparator());
-        return sb.toString();
+        String sb = "\t\tassign, " + result + ", 1" +
+                System.lineSeparator() +
+                "\t\tbreq, " + exponent + ", 0, " + endLabel +
+                System.lineSeparator() +
+                "\t" + startLabel + ":" +
+                System.lineSeparator() +
+                "\t\tmult, " + result + ", " + base + ", " + result +
+                System.lineSeparator() +
+                "\t\tsub, " + exponent + ", 1, " + exponent +
+                System.lineSeparator() +
+                "\t\tbreq, " + exponent + ", 0, " + endLabel +
+                System.lineSeparator() +
+                "\t\tbrneq, " + exponent + ", 0, " + startLabel +
+                System.lineSeparator() +
+                "\t" + endLabel + ":" +
+                System.lineSeparator();
+        return sb;
     }
 }

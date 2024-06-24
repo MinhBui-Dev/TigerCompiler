@@ -14,8 +14,7 @@ public class IRArrayLoad extends IRInstruction {
 
     @Override
     public String toString() {
-        String sb = "\t\tarray_load, " + result + ", " + array + ", " + index +
+        return "\t\tarray_load, " + result + ", " + array + ", " + index +
                 System.lineSeparator();
-        return sb;
     }
 }
