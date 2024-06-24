@@ -1,4 +1,4 @@
-package Tiger;
+package tiger;
 
 public class TokenTuple {
     private String key;
