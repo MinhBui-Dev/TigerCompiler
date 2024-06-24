@@ -27,7 +27,6 @@ public class MyTigerSemanticAnalyzer extends TigerBaseVisitor<AstNode> {
         this.scopeManager = new ScopeManager();
         this.semanticError = new ArrayList<>();
         this.loopCounter = 0;
-        String currentFunctionName = "global";
     }
 
     @Override
