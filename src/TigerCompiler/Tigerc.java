@@ -16,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class Tigerc {
     public static void main(String[] args) {
@@ -172,7 +171,7 @@ public class Tigerc {
     }
 
     private static TigerParser getParser(String filename) throws RuntimeException {
-        TigerParser parser = null;
+        TigerParser parser;
 
         //Create Parser
         //Convert IOException to RuntimeException
@@ -194,7 +193,7 @@ public class Tigerc {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(symbolTable.toString());
+        sb.append(symbolTable);
         for (ScopedSymbolTable tab : symbolTable.getChildScopes()) {
             sb.append(traverseTable(tab));
         }
