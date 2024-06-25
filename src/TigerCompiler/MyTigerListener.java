@@ -1,4 +1,4 @@
-package tigercompiler;
+package TigerCompiler;
 
 import antlr.TigerBaseListener;
 import antlr.TigerLexer;

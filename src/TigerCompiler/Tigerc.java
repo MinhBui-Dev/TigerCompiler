@@ -1,4 +1,4 @@
-package tigercompiler;
+package TigerCompiler;
 
 import tiger.*;
 import antlr.TigerParser;
