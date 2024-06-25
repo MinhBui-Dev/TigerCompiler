@@ -1,4 +1,4 @@
-package TigerCompiler;
+package tigercompiler;
 
 import antlr.TigerLexer;
 import org.antlr.v4.runtime.CharStream;

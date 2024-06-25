@@ -1,4 +1,4 @@
-package TigerCompiler;
+package tigercompiler;
 
 import tiger.ast.ASTVisitor;
 import tiger.ast.AstNode;
