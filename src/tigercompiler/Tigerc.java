@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import tiger.ast.AstNode;
-import tiger.irinstruction.IRInstruction;
 import tiger.irinstruction.IRProgram;
 import tiger.symbol.ScopedSymbolTable;
 

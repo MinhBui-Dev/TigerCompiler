@@ -6,7 +6,7 @@ import java.util.List;
 public class IRProgram extends IRInstruction{
     private IRStaticData data;
     private List<IRFunction> functions;
-    private String name;
+    private final String name;
 
     public IRProgram (String name){
         this.name = name;

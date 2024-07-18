@@ -403,7 +403,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             if (functionCallStat.hasArgs()) {
                 for (ExpressionNode expr : functionCallStat.getArguments()) {
                     expr.accept(this);
-                    argsSB.append(", " + this.lastTempVar);
+                    argsSB.append(", ").append(this.lastTempVar);
                 }
             } else {
                 argsSB.append(",");
