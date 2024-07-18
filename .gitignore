@@ -34,3 +34,9 @@ bin/
 
 ### Test Files ###
 phase1_testfiles_v1/
+phase2_testfiles_v1/
+
+### Build Files ###
+build/
+cs8803_bin/
+antlr/
