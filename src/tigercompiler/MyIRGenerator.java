@@ -21,7 +21,6 @@ import java.util.*;
 
 public class MyIRGenerator implements ASTVisitor<Void> {
 
-    private List<IRInstruction> instructions;
     private List<IRInstruction> tempInstructions;
     private List<IRInstruction> staticInitInstructions;
     private ScopedSymbolTable symbolTable;
@@ -30,31 +29,32 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     private Stack<String> endLoopLabels;
     private String lastTempVar;
 
-    private StringBuilder intListBuilder;
-    private StringBuilder staticIntList;
 
-    private List<ArrayList<IRInstruction>> functionIRList;
+
+    private IRProgram program;
+    private IRStaticData staticData;
+    private IRFunction function;
+    private IRVarData varData;
+
 
 
     public MyIRGenerator(ScopedSymbolTable symbolTable) {
         this.symbolTable = symbolTable;
-        this.instructions = new ArrayList<>();
-        this.functionIRList = new ArrayList<>();
         this.endLoopLabels = new Stack<>();
     }
 
-    public List<IRInstruction> generate(AstNode root) {
+    public IRProgram generate(AstNode root) {
         root.accept(this);
-        return instructions;
+        return this.program;
     }
 
 
     @Override
     public Void visit(Program node) {
         String programName = node.getProgramName();
-        this.instructions.add(new IRCode("start_program " + programName));
-        this.staticIntList = new StringBuilder();
-        staticIntList.append("\tstatic-int-list: ");
+        this.program = new IRProgram(programName);
+        this.staticData = new IRStaticData();
+
 
 
         //visit variable
@@ -62,6 +62,8 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         for (Variable var : node.getGlobals()) {
             var.accept(this);
         }
+
+        this.program.setData(this.staticData);
 
         //Iterate through scope and function
         List<ScopedSymbolTable> childScope = this.symbolTable.getChildScopes();
@@ -77,16 +79,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             functionIterator.next().accept(this);
         }
 
-        //Add static variable list
-        staticIntList.append(System.lineSeparator());
-        staticIntList.append("\tstatic-float-list: \n");
-        this.instructions.add(new IRCode(this.staticIntList.toString()));
 
-        //Add IRcode from each function
-        for (ArrayList<IRInstruction> functionIR : this.functionIRList) {
-            this.instructions.addAll(functionIR);
-        }
-        this.instructions.add(new IRCode("end_program " + programName));
         return null;
     }
 
@@ -94,43 +87,35 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     @Override
     public Void visit(Function function) {
         String functionName = function.getId();
-        StringBuilder builder = new StringBuilder();
         this.tempInstructions = new ArrayList<>();
+        this.function = new IRFunction(functionName);
 
 
-        builder.append("start_function " + functionName);
-        builder.append(System.lineSeparator());
 
         if (function.getReturnType() != null) {
             String returnType = function.getReturnType().toString();
-            builder.append("\t" + returnType + " " + functionName + "(");
-
-        } else {
-            builder.append("\tvoid " + functionName + "(");
+            this.function.setReturnType(returnType);
         }
+
 
         if (functionName.equals("main") && staticInitInstructions != null) {
-            this.tempInstructions.addAll(this.staticInitInstructions);
+            this.function.setStaticInitInstruction(this.staticInitInstructions);
         }
 
-        this.intListBuilder = new StringBuilder();
-        this.intListBuilder.append("\tint-list: ");
+        this.varData = new IRVarData();
 
         //visit variable
         if (function.getArgs() != null) {
+            LinkedHashMap<String, String> args = new LinkedHashMap<>();
             for (Variable var : function.getArgs()) {
                 String id = var.getID().get(0);
                 VariableSymbol symbol = (VariableSymbol) this.symbolTable.resolve(id);
                 id = symbol.getNameMangling();
-                builder.append(var.getType().toString() + " " + id + ", ");
+                args.put(id,var.getType().toString());
                 var.accept(this);
             }
-            builder.setLength(builder.length() - 2);
-            builder.append(")");
-        } else {
-            builder.append(")");
+            this.function.setFunctionArgs(args);
         }
-        builder.append(System.lineSeparator());
 
 
         //visit function
@@ -145,19 +130,12 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             }
         }
 
-        builder.append(intListBuilder);
-        builder.append("\n\tfloat-list:\n");
-        builder.append("\t" + functionName + ":");
-        List<IRInstruction> functionIR = new ArrayList<>();
-        functionIR.add(new IRCode(builder.toString()));
-        functionIR.addAll(this.tempInstructions);
         if (function.getReturnType() == null) {
-            functionIR.add(new IRReturn());
+            this.tempInstructions.add(new IRReturn());
         }
-        functionIR.add(new IRCode("end_function " + functionName + "\n"));
 
-        //add temp instruction to function
-        this.functionIRList.add((ArrayList<IRInstruction>) functionIR);
+        this.function.setInstructions(this.tempInstructions);
+        this.program.addFunction(this.function);
         return null;
     }
 
@@ -172,15 +150,16 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     public Void visit(Variable variable) {
         String storageClass = variable.getStorageClass();
         List<String> vars = variable.getID();
-        StringBuilder sb = new StringBuilder();
+
         if (storageClass.equals("static")) {
+            // Static Data
             Constant init = variable.getValue();
             Type type = variable.getType();
             if (init.getNum() != 0) {
                 String constant = String.valueOf(init.getNum());
                 if (type instanceof BaseType) {
                     for (String var : vars) {
-                        sb.append("_0_" + var + ", ");
+                        this.staticData.addIntVar("_0_" + var);
                         this.staticInitInstructions.add(new IRAssign(("_0_" + var), constant));
                     }
                 } else {
@@ -192,13 +171,13 @@ public class MyIRGenerator implements ASTVisitor<Void> {
 
                     if (symbol.getType() instanceof BaseType) {
                         for (String var : vars) {
-                            sb.append("_0_" + var + ", ");
+                            this.staticData.addIntVar("_0_" + var);
                             this.staticInitInstructions.add(new IRAssign(("_0_" + var), constant));
                         }
                     } else {
                         ArrayType arrayType = (ArrayType) symbol.getType();
                         for (String var : vars) {
-                            sb.append("_0_" + var + "[" + arrayType.getSize() + "], ");
+                            this.staticData.addIntVar("_0_" + var + "[" + arrayType.getSize() + "]");
                             this.staticInitInstructions.add(new IRAssign(("_0_" + var), String.valueOf(arrayType.getSize()), constant));
                         }
                     }
@@ -206,7 +185,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             } else {
                 if (type instanceof BaseType) {
                     for (String var : vars) {
-                        sb.append("_0_" + var + ", ");
+                        this.staticData.addIntVar("_0_" + var);
                     }
                 } else {
                     TypeID typeID = (TypeID) type;
@@ -217,18 +196,18 @@ public class MyIRGenerator implements ASTVisitor<Void> {
 
                     if (symbol.getType() instanceof BaseType) {
                         for (String var : vars) {
-                            sb.append("_0_" + var + ", ");
+                            this.staticData.addIntVar("_0_" + var);
                         }
                     } else {
                         ArrayType arrayType = (ArrayType) symbol.getType();
                         for (String var : vars) {
-                            sb.append("_0_" + var + "[" + arrayType.getSize() + "], ");
+                            this.staticData.addIntVar("_0_" + var + "[" + arrayType.getSize() + "]");
                         }
                     }
                 }
             }
-            this.staticIntList.append(sb);
         } else {
+            // Variable Data
             Type type = variable.getType();
             if (variable.getValue() != null) {
                 //Initialize variable IR code
@@ -237,7 +216,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
 
                     for (String var : vars) {
                         VariableSymbol symbol = (VariableSymbol) this.symbolTable.resolve(var);
-                        sb.append(symbol.getNameMangling() + ", ");
+                        this.varData.addIntVar(symbol.getNameMangling());
                         tempInstructions.add(new IRAssign(symbol.getNameMangling(), constant));
                     }
                 } else {
@@ -250,14 +229,14 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                     if (typeSymbol.getType() instanceof BaseType) {
                         for (String var : vars) {
                             VariableSymbol varSymbol = (VariableSymbol) this.symbolTable.resolve(var);
-                            sb.append(varSymbol.getNameMangling() + ", ");
+                            this.varData.addIntVar(varSymbol.getNameMangling());
                             tempInstructions.add(new IRAssign(varSymbol.getNameMangling(), constant));
                         }
                     } else {
                         ArrayType arrayType = (ArrayType) typeSymbol.getType();
                         for (String var : vars) {
                             VariableSymbol varSymbol = (VariableSymbol) this.symbolTable.resolve(var);
-                            sb.append(varSymbol.getNameMangling() + "[" + arrayType.getSize() + "], ");
+                            this.varData.addIntVar(varSymbol.getNameMangling() + "[" + arrayType.getSize() + "]");
                             tempInstructions.add(new IRAssign(varSymbol.getNameMangling(), String.valueOf(arrayType.getSize()), constant));
                         }
                     }
@@ -267,7 +246,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
 
                     for (String var : vars) {
                         VariableSymbol symbol = (VariableSymbol) this.symbolTable.resolve(var);
-                        sb.append(symbol.getNameMangling() + ", ");
+                        this.varData.addIntVar(symbol.getNameMangling());
                     }
                 } else {
                     TypeID typeID = (TypeID) type;
@@ -279,18 +258,17 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                     if (typeSymbol.getType() instanceof BaseType) {
                         for (String var : vars) {
                             VariableSymbol varSymbol = (VariableSymbol) this.symbolTable.resolve(var);
-                            sb.append(varSymbol.getNameMangling() + ", ");
+                            this.varData.addIntVar(varSymbol.getNameMangling());
                         }
                     } else {
                         ArrayType arrayType = (ArrayType) typeSymbol.getType();
                         for (String var : vars) {
                             VariableSymbol varSymbol = (VariableSymbol) this.symbolTable.resolve(var);
-                            sb.append(varSymbol.getNameMangling() + "[" + arrayType.getSize() + "], ");
+                            this.varData.addIntVar(varSymbol.getNameMangling() + "[" + arrayType.getSize() + "]");
                         }
                     }
                 }
             }
-            this.intListBuilder.append(sb);
         }
         return null;
     }
@@ -618,7 +596,8 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         private String getNextTemp () {
             String sb = "_t" + this.tempCounter;
             this.tempCounter++;
-            this.intListBuilder.append(sb + ", ");
+            this.varData.addIntVar(sb);
+            this.varData.incTempCount();
             return sb;
         }
 

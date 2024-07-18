@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import tiger.ast.AstNode;
 import tiger.irinstruction.IRInstruction;
+import tiger.irinstruction.IRProgram;
 import tiger.symbol.ScopedSymbolTable;
 
 import java.io.File;
@@ -116,7 +117,7 @@ public class Tigerc {
 
 
                 MyIRGenerator irGenerator = new MyIRGenerator(table);
-                List<IRInstruction> irInstructions = irGenerator.generate(program);
+                IRProgram programIR = irGenerator.generate(program);
 
                 if (printTableArg) {
                     //print out table
@@ -136,9 +137,7 @@ public class Tigerc {
                     File file = new File(name);
                     file.createNewFile();
                     FileWriter writer = new FileWriter(file);
-                    for (IRInstruction ir : irInstructions) {
-                        writer.write(ir.toString());
-                    }
+                    writer.write(programIR.toString());
                     writer.close();
 
                 }
