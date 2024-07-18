@@ -26,6 +26,14 @@ public class IRVarData extends IRInstruction{
         this.tempCount++;
     }
 
+    public int getTempCount(){
+        return this.tempCount;
+    }
+
+    public int getVarsCount(){
+        return this.intVars.size();
+    }
+
     public String toString(){
         StringBuilder sb = new StringBuilder();
 
