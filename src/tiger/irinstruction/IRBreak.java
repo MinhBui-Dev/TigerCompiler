@@ -9,6 +9,6 @@ public class IRBreak extends IRInstruction {
 
     @Override
     public String toString() {
-        return "\t\tgoto, " + endLabel+", ,\n";
+        return "\t\tgoto, " + endLabel+", ," + System.lineSeparator();
     }
 }
