@@ -32,7 +32,6 @@ public class MyIRGenerator implements ASTVisitor<Void> {
 
     private IRProgram program;
     private IRStaticData staticData;
-    private IRFunction function;
     private IRVarData varData;
 
 
@@ -85,17 +84,17 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     public Void visit(Function function) {
         String functionName = function.getId();
         this.tempInstructions = new ArrayList<>();
-        this.function = new IRFunction(functionName);
+        IRFunction functionIR = new IRFunction(functionName);
 
 
         if (function.getReturnType() != null) {
             String returnType = function.getReturnType().toString();
-            this.function.setReturnType(returnType);
+            functionIR.setReturnType(returnType);
         }
 
 
         if (functionName.equals("main") && staticInitInstructions != null) {
-            this.function.setStaticInitInstruction(this.staticInitInstructions);
+            functionIR.setStaticInitInstruction(this.staticInitInstructions);
         }
 
         this.varData = new IRVarData();
@@ -110,7 +109,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                 args.put(id, var.getType().toString());
                 var.accept(this);
             }
-            this.function.setFunctionArgs(args);
+            functionIR.setFunctionArgs(args);
         }
 
 
@@ -129,9 +128,9 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         if (function.getReturnType() == null) {
             this.tempInstructions.add(new IRReturn());
         }
-        this.function.setData(this.varData);
-        this.function.setInstructions(this.tempInstructions);
-        this.program.addFunction(this.function);
+        functionIR.setData(this.varData);
+        functionIR.setInstructions(this.tempInstructions);
+        this.program.addFunction(functionIR);
         return null;
     }
 
@@ -457,11 +456,11 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     @Override
     public Void visit(IfStat ifStat) {
 
-        String endlabel = getNextLabel();
+        String endLabel = getNextLabel();
         //evaluation expression
         ifStat.getCondition().accept(this);
         String temp = lastTempVar;
-        tempInstructions.add(new IRComparisonBranch("==", temp, "0", endlabel));
+        tempInstructions.add(new IRComparisonBranch("==", temp, "0", endLabel));
         ListIterator<ScopedSymbolTable> childScopes = this.symbolTable.getChildScopes().listIterator();
         for (StatNode stat : ifStat.getThenBody()) {
             if (stat instanceof LetStat) {
@@ -472,7 +471,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                 stat.accept(this);
             }
         }
-        tempInstructions.add(new IRLabel(endlabel));
+        tempInstructions.add(new IRLabel(endLabel));
         return null;
     }
 
@@ -532,7 +531,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         }
         //send back to start label
         tempInstructions.add(new IRBreak(startLabel));
-        //endlabel
+        //endLabel
         tempInstructions.add(new IRLabel(endLabel));
         return null;
     }
@@ -565,7 +564,6 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         if (operator.equals("**")) {
             String startLabel = getNextLabel();
             String endLabel = getNextLabel();
-            String base = left;
             String exponent = right;
             if (binaryOpExpression.getRightExpression() instanceof Constant) {
                 String temp = this.getNextTemp();
@@ -576,7 +574,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             tempInstructions.add(new IRAssign(result, "1"));
             tempInstructions.add(new IRComparisonBranch("==", exponent, "0", endLabel));
             tempInstructions.add(new IRLabel(startLabel));
-            tempInstructions.add(new IRBinaryOp("*", result, base, result));
+            tempInstructions.add(new IRBinaryOp("*", result, left, result));
             tempInstructions.add(new IRBinaryOp("-", exponent, "1", exponent));
             tempInstructions.add(new IRComparisonBranch("==", exponent, "0", endLabel));
             tempInstructions.add(new IRComparisonBranch("!=", exponent, "0", startLabel));
