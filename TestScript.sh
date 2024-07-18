@@ -6,7 +6,7 @@ output_dir="output"
 
 # Define your Java command (replace with your actual command)
 java_command="java -jar cs8803_bin/tigerc.jar -f"  # Assuming -f takes the filename with path
-java_test_command="java -jar phase2_testFiles_v1/tigerc-ir.jar -r "
+#java_test_command="java -jar phase2_testFiles_v1/tigerc-ir.jar -r "
 
 # Loop through all files in the src directory (excluding hidden ones)
 for file in "$test_dir/"*.tiger ; do
