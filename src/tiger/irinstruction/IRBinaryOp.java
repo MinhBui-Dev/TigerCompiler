@@ -19,29 +19,25 @@ public class IRBinaryOp extends IRInstruction {
         switch (op) {
             case "+":
                 sb.append("\t\tadd, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
             case "-":
                 sb.append("\t\tsub, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
             case "*":
                 sb.append("\t\tmult, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
             case "/":
                 sb.append("\t\tdiv, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
             case "&":
                 sb.append("\t\tand, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
             case "|":
                 sb.append("\t\tor, ").append(left).append(", ").append(right).append(", ").append(result);
-                sb.append(System.lineSeparator());
                 break;
         }
+
+        sb.append(System.lineSeparator());
         return sb.toString();
     }
 }
