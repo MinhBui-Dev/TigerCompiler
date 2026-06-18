@@ -1,6 +1,9 @@
 package tiger.irinstruction;
 
-public class IRComparisonBranch extends IRInstruction {
+import java.util.HashSet;
+import java.util.Set;
+
+public class IRComparisonBranch extends IRInstruction{
     private final String leftOperand;
     private final String rightOperand;
     private final String op;
@@ -13,6 +16,21 @@ public class IRComparisonBranch extends IRInstruction {
         this.label = label;
     }
 
+    public String getLeftOperand() {
+        return leftOperand;
+    }
+
+    public String getRightOperand() {
+        return rightOperand;
+    }
+
+    public String getOp() {
+        return op;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 
     @Override
     public String toString() {
@@ -39,5 +57,27 @@ public class IRComparisonBranch extends IRInstruction {
         }
         sb.append(System.lineSeparator());
         return sb.toString();
+    }
+
+    @Override
+    public <T> T accept(IRVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public Set<String> getUse() {
+        HashSet<String> use = new HashSet<>();
+        if (!leftOperand.matches("^\\d+$")) {
+            use.add(leftOperand);
+        }
+        if (!rightOperand.matches("^\\d+$")) {
+            use.add(rightOperand);
+        }
+        return use;
+    }
+
+    @Override
+    public Set<String> getDef() {
+        return new HashSet<>();
     }
 }

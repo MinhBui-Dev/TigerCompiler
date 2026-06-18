@@ -1,27 +1,30 @@
 #!/bin/bash
 
 # Define the directory containing the files
-test_dir="phase2_testfiles_v1/files"
+test_dir="phase2_testfiles_v1"
+file_dir="files"
 output_dir="output"
 
 # Define your Java command (replace with your actual command)
 java_command="java -jar cs8803_bin/tigerc.jar -f"  # Assuming -f takes the filename with path
 #java_test_command="java -jar phase2_testFiles_v1/tigerc-ir.jar -r "
 
+flag=$1
+
 # Loop through all files in the src directory (excluding hidden ones)
-for file in "$test_dir/"*.tiger ; do
+for file in "$test_dir/$file_dir/"*.tiger ; do
   # Check if it's a regular file (not a directory or hidden file)
   if [[ -f "$file" ]]; then
     # Construct the full filename with path
     filename="$file"
 
     # Run the Java command with the full path filename and -i flag after
-    echo "Running: $java_command $filename -i"  # Add echo for demonstration
-    $java_command "$filename" -i
+    echo "Running: $java_command $filename $flag"  # Add echo for demonstration
+    $java_command "$filename" $flag
   fi
 done
 
-echo "Finished processing .tiger files in $test_dir"
+echo "Finished processing .tiger files in $test_dir/$file_dir"
 
 # Check if the output folder exists and create a unique folder name if it does
 FOLDER_NAME="$output_dir"
@@ -33,10 +36,20 @@ done
 
 mkdir -p "$test_dir/$FOLDER_NAME"
 
-find $test_dir -maxdepth 1 -type f -name "*.ir" -exec mv {} "$test_dir/$FOLDER_NAME" \;
-
-echo "All .ir files have been moved to $test_dir/$FOLDER_NAME"
-
+case "$flag" in
+    -i)
+      find $test_dir/$file_dir -maxdepth 1 -type f -name "*.ir" -exec mv {} "$test_dir/$FOLDER_NAME" \;
+      echo "All .ir files have been moved to $test_dir/$FOLDER_NAME"
+      ;;
+    -v)
+      find $test_dir/$file_dir -maxdepth 1 -type f -name "*.liveness" -exec mv {} "$test_dir/$FOLDER_NAME" \;
+      echo "All .liveness files have been moved to $test_dir/$FOLDER_NAME"
+      ;;
+    -c)
+      find $test_dir/$file_dir -maxdepth 1 -type f -name "*.cfg.gv" -exec mv {} "$test_dir/$FOLDER_NAME" \;
+      echo "All .cfg.gv files have been moved to $test_dir/$FOLDER_NAME"
+      ;;
+esac
 #for irfile in "$test_dir/$FOLDER_NAME"*.ir ; do
 #  # Check if it's a regular file (not a directory or hidden file)
 #  if [[ -f "$irfile" ]]; then

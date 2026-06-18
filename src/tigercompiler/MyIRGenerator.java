@@ -173,7 +173,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                         ArrayType arrayType = (ArrayType) symbol.getType();
                         for (String var : vars) {
                             this.staticData.addIntVar("_0_" + var + "[" + arrayType.getSize() + "]", constant);
-                            this.staticInitInstructions.add(new IRAssign(("_0_" + var), String.valueOf(arrayType.getSize()), constant));
+                            this.staticInitInstructions.add(new IRAssignArray(("_0_" + var), String.valueOf(arrayType.getSize()), constant));
                         }
                     }
                 }
@@ -232,7 +232,7 @@ public class MyIRGenerator implements ASTVisitor<Void> {
                         for (String var : vars) {
                             VariableSymbol varSymbol = (VariableSymbol) this.symbolTable.resolve(var);
                             this.varData.addIntVar(varSymbol.getNameMangling() + "[" + arrayType.getSize() + "]");
-                            tempInstructions.add(new IRAssign(varSymbol.getNameMangling(), String.valueOf(arrayType.getSize()), constant));
+                            tempInstructions.add(new IRAssignArray(varSymbol.getNameMangling(), String.valueOf(arrayType.getSize()), constant));
                         }
                     }
                 }
@@ -398,22 +398,20 @@ public class MyIRGenerator implements ASTVisitor<Void> {
     public Void visit(FunctionCallStat functionCallStat) {
 
         String functionName = functionCallStat.getFunctionName();
-        StringBuilder argsSB = new StringBuilder();
+        ArrayList<String> args = new ArrayList<>();
         if (functionCallStat.hasArgs()) {
             for (ExpressionNode expr : functionCallStat.getArguments()) {
                 expr.accept(this);
-                argsSB.append(", ").append(this.lastTempVar);
+                args.add(this.lastTempVar);
             }
-        } else {
-            argsSB.append(",");
         }
 
         if (functionCallStat.isAssignment()) {
             functionCallStat.getAssignTo().accept(this);
-            String assign = this.lastTempVar;
-            tempInstructions.add(new IRFunctionCall(functionName, argsSB.toString(), assign));
+            String assignedVar = this.lastTempVar;
+            tempInstructions.add(new IRFunctionCall(functionName, args, assignedVar));
         } else {
-            tempInstructions.add(new IRFunctionCall(functionName, argsSB.toString()));
+            tempInstructions.add(new IRProcedureCall(functionName, args));
         }
         return null;
     }
@@ -426,7 +424,9 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         //evaluation expression
         ifElseStat.getCondition().accept(this);
         String temp = lastTempVar;
-        tempInstructions.add(new IRComparisonBranch("==", temp, "0", elseLabel));
+        String temp2 = getNextTemp();
+        tempInstructions.add(new IRAssignConstant(temp2, "0"));
+        tempInstructions.add(new IRComparisonBranch("==", temp, temp2, elseLabel));
         ListIterator<ScopedSymbolTable> childScopes = this.symbolTable.getChildScopes().listIterator();
         for (StatNode stat : ifElseStat.getThenBody()) {
             if (stat instanceof LetStat) {
@@ -460,7 +460,9 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         //evaluation expression
         ifStat.getCondition().accept(this);
         String temp = lastTempVar;
-        tempInstructions.add(new IRComparisonBranch("==", temp, "0", endLabel));
+        String temp2 = getNextTemp();
+        tempInstructions.add(new IRAssignConstant(temp2, "0"));
+        tempInstructions.add(new IRComparisonBranch("==", temp, temp2, endLabel));
         ListIterator<ScopedSymbolTable> childScopes = this.symbolTable.getChildScopes().listIterator();
         for (StatNode stat : ifStat.getThenBody()) {
             if (stat instanceof LetStat) {
@@ -523,7 +525,9 @@ public class MyIRGenerator implements ASTVisitor<Void> {
         //evaluate condition
         whileStat.getCondition().accept(this);
         //if false -> go to end label
-        tempInstructions.add(new IRComparisonBranch("==", this.lastTempVar, "0", endLabel));
+        String temp = this.getNextTemp();
+        tempInstructions.add(new IRAssignConstant(temp, "0"));
+        tempInstructions.add(new IRComparisonBranch("==", this.lastTempVar, temp, endLabel));
         //execute while body
         this.endLoopLabels.push(endLabel);
         for (StatNode stat : whileStat.getBody()) {
@@ -565,19 +569,21 @@ public class MyIRGenerator implements ASTVisitor<Void> {
             String startLabel = getNextLabel();
             String endLabel = getNextLabel();
             String exponent = right;
+            String temp;
             if (binaryOpExpression.getRightExpression() instanceof Constant) {
-                String temp = this.getNextTemp();
+                temp = this.getNextTemp();
                 tempInstructions.add(new IRAssign(temp, right));
                 exponent = temp;
             }
 
+            temp = this.getNextTemp();
+            tempInstructions.add(new IRAssignConstant(temp, "0"));
             tempInstructions.add(new IRAssign(result, "1"));
-            tempInstructions.add(new IRComparisonBranch("==", exponent, "0", endLabel));
+            tempInstructions.add(new IRComparisonBranch("==", exponent, temp, endLabel));
             tempInstructions.add(new IRLabel(startLabel));
             tempInstructions.add(new IRBinaryOp("*", result, left, result));
             tempInstructions.add(new IRBinaryOp("-", exponent, "1", exponent));
-            tempInstructions.add(new IRComparisonBranch("==", exponent, "0", endLabel));
-            tempInstructions.add(new IRComparisonBranch("!=", exponent, "0", startLabel));
+            tempInstructions.add(new IRComparisonBranch("!=", exponent, temp, startLabel));
             tempInstructions.add(new IRLabel(endLabel));
 
         } else {

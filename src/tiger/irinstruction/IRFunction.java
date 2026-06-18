@@ -2,7 +2,7 @@ package tiger.irinstruction;
 
 import java.util.*;
 
-public class IRFunction extends IRInstruction{
+public class IRFunction extends IRInstruction {
     private List<IRInstruction> staticInitInstruction;
     private List<IRInstruction> instructions;
     private String functionName;
@@ -54,6 +54,15 @@ public class IRFunction extends IRInstruction{
         return instructions;
     }
 
+    public List<IRInstruction> getAllInstructions() {
+        List<IRInstruction> allInstructions = new ArrayList<>();
+        if(staticInitInstruction != null){
+            allInstructions.addAll(staticInitInstruction);
+        }
+        allInstructions.addAll(instructions);
+        return allInstructions;
+    }
+
     public void setInstructions(List<IRInstruction> instructions) {
         this.instructions = instructions;
     }
@@ -102,4 +111,20 @@ public class IRFunction extends IRInstruction{
         sb.append("end_function ").append(functionName).append(System.lineSeparator());
         return sb.toString();
     }
+
+    @Override
+    public <T> T accept(IRVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public Set<String> getUse() {
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<String> getDef() {
+        return new HashSet<>();
+    }
+
 }

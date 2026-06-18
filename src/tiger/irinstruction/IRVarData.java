@@ -1,21 +1,27 @@
 package tiger.irinstruction;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class IRVarData extends IRInstruction{
-    private List<String> intVars;
-    private List<String> floatVars;
+    private Set<String> intVars;
+    private Set<String> floatVars;
     private int tempCount;
 
     public IRVarData(){
-        this.intVars = new ArrayList<>();
-        this.floatVars = new ArrayList<>();
+        this.intVars = new HashSet<>();
+        this.floatVars = new HashSet<>();
         this.tempCount = 0;
     }
 
     public void addIntVar(String var){
         this.intVars.add(var);
+    }
+
+    public Set<String> getIntVars() {
+        return intVars;
     }
 
     public void addFloatVar(String var){
@@ -50,5 +56,20 @@ public class IRVarData extends IRInstruction{
         sb.append(System.lineSeparator());
 
         return  sb.toString();
+    }
+
+    @Override
+    public <T> T accept(IRVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public Set<String> getUse() {
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<String> getDef() {
+        return new HashSet<>();
     }
 }

@@ -1,6 +1,9 @@
 package tiger.irinstruction;
 
-public class IRBinaryOp extends IRInstruction {
+import java.util.HashSet;
+import java.util.Set;
+
+public class IRBinaryOp extends IRInstruction{
     private final String op;
     private final String left;
     private final String right;
@@ -11,6 +14,22 @@ public class IRBinaryOp extends IRInstruction {
         this.left = left;
         this.right = right;
         this.result = result;
+    }
+
+    public String getOp() {
+        return op;
+    }
+
+    public String getLeft() {
+        return left;
+    }
+
+    public String getRight() {
+        return right;
+    }
+
+    public String getResult() {
+        return result;
     }
 
     @Override
@@ -39,5 +58,31 @@ public class IRBinaryOp extends IRInstruction {
 
         sb.append(System.lineSeparator());
         return sb.toString();
+    }
+
+    @Override
+    public <T> T accept(IRVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public Set<String> getUse() {
+        HashSet<String> use = new HashSet<>();
+        if (!left.matches("^\\d+$")) {
+            use.add(left);
+        }
+        if (!right.matches("^\\d+$")) {
+            use.add(right);
+        }
+        return use;
+    }
+
+    @Override
+    public Set<String> getDef() {
+        HashSet<String> def = new HashSet<>();
+        if (!result.matches("^\\d+$")) {
+            def.add(result);
+        }
+        return def;
     }
 }

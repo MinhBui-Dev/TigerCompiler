@@ -9,13 +9,18 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import tiger.ast.AstNode;
 import tiger.irinstruction.IRProgram;
+import tiger.mips32.Instruction;
 import tiger.symbol.ScopedSymbolTable;
+import tigercompiler.codeanalysis.CFG;
+import tigercompiler.codeanalysis.MyCodeAnalyzer;
+import tigercompiler.registorallocator.BriggsRegisterAllocationStrategy;
+import tigercompiler.registorallocator.NaiveRegisterAllocationStrategy;
+import tigercompiler.registorallocator.RegisterAllocationStrategy;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Tigerc {
     public static void main(String[] args) {
@@ -23,8 +28,8 @@ public class Tigerc {
         if (args.length < 2) {
             System.out.println("Usage: java -jar ./Tigerc.jar -f <filename> -s -p -t -i");
             System.exit(1);
-        } else if (args.length > 4) {
-            System.out.println("Usage: java -jar ./Tigerc.jar -f <filename> -s -p -t -i");
+        } else if (args.length > 14) {
+            System.out.println("Usage: java -jar ./Tigerc.jar -f <filename> -s -p -t -i -c -v");
             System.exit(1);
         } else {
             // check for the number of arguments -f filename -s -p flag and set boolean values accordingly
@@ -38,6 +43,13 @@ public class Tigerc {
             //Phase 2
             boolean printTableArg = false;
             boolean printIRCodeArg = false;
+
+            //Phase 3
+            boolean printCFGArg = false;
+            boolean printLivenessArg = false;
+            boolean runNaive = false;
+            boolean runBriggs = false;
+            boolean printtInterfernceGraph = false;
             for (int i = 0; i < args.length; i++) {
                 switch (args[i]) {
                     case "-f":
@@ -56,6 +68,24 @@ public class Tigerc {
                         break;
                     case "-i":
                         printIRCodeArg = true;
+                        break;
+                    case "-c":
+                        printCFGArg = true;
+                        break;
+                    case "-v":
+                        printLivenessArg = true;
+                        break;
+                    case "-n":
+                        runNaive = true;
+                        break;
+                    case "-g":
+                        runBriggs = true;
+                        break;
+                    case "-r":
+                        i++;
+                        break;
+                    case "-a":
+                        printtInterfernceGraph = true;
                         break;
                     default:
                         invalidArg = true;
@@ -139,6 +169,83 @@ public class Tigerc {
                     writer.write(programIR.toString());
                     writer.close();
 
+                }
+
+                //Phase 3
+                MyCodeAnalyzer codeAnalyzer = new MyCodeAnalyzer(programIR);
+                List<CFG> cfgList = codeAnalyzer.getCfgList();
+
+
+                if (printCFGArg){
+                    String name = filename.substring(0, filename.length() - 6) + ".cfg.gv";
+                    System.out.println("Print CFG");
+                    File file = new File(name);
+                    file.createNewFile();
+                    FileWriter writer = new FileWriter(file);
+                    writer.write("digraph CFG {\n");
+                    for (CFG cfg: cfgList){
+                        writer.write(cfg.printCFGAsDOT());
+                    }
+                    writer.write("}\n");
+                    writer.close();
+                    System.out.println("Done Printing");
+                }
+
+                if (printLivenessArg){
+                    String name = filename.substring(0, filename.length() - 6) + ".liveness";
+                    System.out.println("Print liveness analysis");
+                    File file = new File(name);
+                    file.createNewFile();
+                    FileWriter writer = new FileWriter(file);
+                    for (CFG cfg: cfgList){
+                        writer.write(cfg.printLivenessAnalysis());
+                    }
+                    writer.close();
+                    System.out.println("Done Printing");
+                }
+
+                if (printtInterfernceGraph) {
+                    String name = filename.substring(0, filename.length() - 6) + "ifg.gv";
+                    File file = new File(name);
+                    file.createNewFile();
+                    FileWriter writer = new FileWriter(file);
+                    writer.write("digraph IFG {\n");
+                    for (CFG cfg: cfgList){
+                        writer.write(cfg.printInterferenceGraph());
+                    }
+                    writer.write("}\n");
+                    writer.close();
+                }
+
+                if (runBriggs){
+                    MyMIPSGenerator generator = new MyMIPSGenerator(programIR,"briggs");
+                    List<Instruction> MIPSInstruction = generator.generateMIPS(cfgList);
+
+                    String name = filename.substring(0, filename.length() - 6) + ".briggs.s";
+                    File file = new File(name);
+                    file.createNewFile();
+                    FileWriter writer = new FileWriter(file);
+                    for (Instruction instruction: MIPSInstruction){
+                        writer.write(instruction.toString());
+                    }
+                    writer.close();
+                    System.out.println("Done Printing");
+                }
+
+                if (runNaive){
+
+                    MyMIPSGenerator generator = new MyMIPSGenerator(programIR,"naive");
+                    List<Instruction> MIPSInstruction = generator.generateMIPS(cfgList);
+
+                    String name = filename.substring(0, filename.length() - 6) + ".naive.s";
+                    File file = new File(name);
+                    file.createNewFile();
+                    FileWriter writer = new FileWriter(file);
+                    for (Instruction instruction: MIPSInstruction){
+                        writer.write(instruction.toString());
+                    }
+                    writer.close();
+                    System.out.println("Done Printing");
                 }
 
 

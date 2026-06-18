@@ -1,0 +1,17 @@
+package tiger.mips32;
+
+public class Mul extends Instruction{
+    private final String source;
+    private final String target;
+    private final String dest;
+
+    public Mul(final String dest, final String source, final String target) {
+        this.source = source;
+        this.target = target;
+        this.dest = dest;
+    }
+
+    public String toString(){
+        return String.format("\tmul %s, %s, %s", dest, source, target) + System.lineSeparator();
+    }
+}
