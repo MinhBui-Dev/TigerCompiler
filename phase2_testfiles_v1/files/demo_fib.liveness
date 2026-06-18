@@ -1,0 +1,39 @@
+Liveness of function fib:
+Block 0:
+   IN: [_1_n]   OUT: [_1_n]		assign, _2_tmp1, 0,
+   IN: [_1_n]   OUT: [_1_n]		assign, _2_tmp2, 0,
+   IN: [_1_n]   OUT: [_1_n, _t0]		assign, _t0, 1,
+   IN: [_1_n, _t0]   OUT: [_1_n, _t0]		brleq, _1_n, 1, _L2
+
+Block 1:
+   IN: [_t0, _1_n]   OUT: [_t0, _1_n]	_L2:
+   IN: [_t0, _1_n]   OUT: [_t0, _1_n, _t1]		assign, _t1, 0,
+   IN: [_t0, _1_n, _t1]   OUT: [_1_n]		breq, _t0, _t1, _L0
+
+Block 2:
+   IN: [_1_n]   OUT: [_t0, _1_n]		assign, _t0, 0,
+
+Block 3:
+   IN: [_1_n]   OUT: [_1_n]	_L0:
+   IN: [_1_n]   OUT: [_1_n, _t2]		sub, _1_n, 1, _t2
+   IN: [_1_n, _t2]   OUT: [_2_tmp1, _1_n]		callr, _2_tmp1, fib, _t2
+   IN: [_2_tmp1, _1_n]   OUT: [_2_tmp1, _t3]		sub, _1_n, 2, _t3
+   IN: [_2_tmp1, _t3]   OUT: [_2_tmp2, _2_tmp1]		callr, _2_tmp2, fib, _t3
+   IN: [_2_tmp2, _2_tmp1]   OUT: [_t4]		add, _2_tmp1, _2_tmp2, _t4
+   IN: [_t4]   OUT: []		return, _t4, ,
+
+Block 4:
+   IN: [_1_n]   OUT: []		return, _1_n, ,
+
+Block 5:
+   IN: []   OUT: []		goto, _L1, ,
+
+Block 6:
+   IN: []   OUT: []	_L1:
+
+Liveness of function main:
+Block 0:
+   IN: []   OUT: []		callr, _0_result, fib, 12
+   IN: []   OUT: []		call, printi, _0_result
+   IN: []   OUT: []		return, 0, ,
+

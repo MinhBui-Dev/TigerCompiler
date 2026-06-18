@@ -1,0 +1,20 @@
+start_program array_local_init
+    static-int-list:
+    static-float-list:
+
+start_function main
+    int main()
+    int-list: _2_a[3], _t1, _t2, _t3
+    float-list:
+    main:
+    assign, _2_a, 3, 10
+    array_load, _t1, _2_a, 0
+    call, printi, _t1
+    array_load, _t2, _2_a, 1
+    call, printi, _t2
+    array_load, _t3, _2_a, 2
+    call, printi, _t3
+    return, 0, ,
+end_function main
+
+end_program array_local_init

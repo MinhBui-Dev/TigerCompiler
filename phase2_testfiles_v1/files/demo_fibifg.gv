@@ -1,0 +1,28 @@
+digraph IFG {
+subgraph cluster_fib {
+  _2_tmp2;
+  _2_tmp2 -> _2_tmp1;
+  _2_tmp1;
+  _2_tmp1 -> _2_tmp2;
+  _2_tmp1 -> _1_n;
+  _2_tmp1 -> _t3;
+  _t0;
+  _t0 -> _1_n;
+  _t0 -> _t1;
+  _1_n;
+  _1_n -> _2_tmp1;
+  _1_n -> _t0;
+  _1_n -> _t2;
+  _1_n -> _t1;
+  _t2;
+  _t2 -> _1_n;
+  _t1;
+  _t1 -> _t0;
+  _t1 -> _1_n;
+  _t4;
+  _t3;
+  _t3 -> _2_tmp1;
+}
+subgraph cluster_main {
+}
+}

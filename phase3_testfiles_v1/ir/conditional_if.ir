@@ -1,0 +1,126 @@
+start_program conditional_if
+    static-int-list:
+    static-float-list:
+
+start_function main
+    int main()
+    int-list: _2_a, _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9, _t10, _t11, _t12, _t13, _t14, _t15, _t16
+    float-list:
+    main:
+    assign, _2_a, 1,
+    assign, _t1, 1,
+    brgt, _2_a, 0, _L1
+    assign, _t1, 0,
+    _L1:
+    breq, _t1, 0, _L0
+    call, printi, 1
+    _L0:
+    assign, _t2, 1,
+    brgt, _2_a, 1, _L3
+    assign, _t2, 0,
+    _L3:
+    breq, _t2, 0, _L2
+    call, printi, 2
+    _L2:
+    assign, _t3, 1,
+    brgt, _2_a, 2, _L5
+    assign, _t3, 0,
+    _L5:
+    breq, _t3, 0, _L4
+    call, printi, 3
+    _L4:
+    assign, _t4, 1,
+    brlt, _2_a, 0, _L7
+    assign, _t4, 0,
+    _L7:
+    breq, _t4, 0, _L6
+    call, printi, 4
+    _L6:
+    assign, _t5, 1,
+    brlt, _2_a, 1, _L9
+    assign, _t5, 0,
+    _L9:
+    breq, _t5, 0, _L8
+    call, printi, 5
+    _L8:
+    assign, _t6, 1,
+    brlt, _2_a, 2, _L11
+    assign, _t6, 0,
+    _L11:
+    breq, _t6, 0, _L10
+    call, printi, 6
+    _L10:
+    assign, _t7, 1,
+    brgeq, _2_a, 0, _L13
+    assign, _t7, 0,
+    _L13:
+    breq, _t7, 0, _L12
+    call, printi, 7
+    _L12:
+    assign, _t8, 1,
+    brgeq, _2_a, 1, _L15
+    assign, _t8, 0,
+    _L15:
+    breq, _t8, 0, _L14
+    call, printi, 8
+    _L14:
+    assign, _t9, 1,
+    brgeq, _2_a, 2, _L17
+    assign, _t9, 0,
+    _L17:
+    breq, _t9, 0, _L16
+    call, printi, 9
+    _L16:
+    assign, _t10, 1,
+    brleq, _2_a, 0, _L19
+    assign, _t10, 0,
+    _L19:
+    breq, _t10, 0, _L18
+    call, printi, 10
+    _L18:
+    assign, _t11, 1,
+    brleq, _2_a, 1, _L21
+    assign, _t11, 0,
+    _L21:
+    breq, _t11, 0, _L20
+    call, printi, 11
+    _L20:
+    assign, _t12, 1,
+    brleq, _2_a, 2, _L23
+    assign, _t12, 0,
+    _L23:
+    breq, _t12, 0, _L22
+    call, printi, 12
+    _L22:
+    assign, _t13, 1,
+    breq, _2_a, 0, _L25
+    assign, _t13, 0,
+    _L25:
+    breq, _t13, 0, _L24
+    call, printi, 13
+    _L24:
+    assign, _t14, 1,
+    breq, _2_a, 1, _L27
+    assign, _t14, 0,
+    _L27:
+    breq, _t14, 0, _L26
+    call, printi, 14
+    _L26:
+    assign, _t15, 1,
+    brneq, _2_a, 0, _L29
+    assign, _t15, 0,
+    _L29:
+    breq, _t15, 0, _L28
+    call, printi, 15
+    _L28:
+    assign, _t16, 1,
+    brneq, _2_a, 1, _L31
+    assign, _t16, 0,
+    _L31:
+    breq, _t16, 0, _L30
+    call, printi, 16
+    _L30:
+    return, 0, ,
+end_function main
+
+end_program conditional_if

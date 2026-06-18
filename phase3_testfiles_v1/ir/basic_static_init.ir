@@ -1,0 +1,20 @@
+start_program basic_static_init
+    static-int-list: _0_a, _0_b, _0_c
+    static-float-list:
+
+start_function main
+    int main()
+    int-list:
+    float-list:
+    main:
+    assign, _0_a, 40,
+    assign, _0_b, 60,
+    assign, _0_c, 60,
+    assign, _0_b, 50,
+    call, printi, _0_a
+    call, printi, _0_b
+    call, printi, _0_c
+    return, 0, ,
+end_function main
+
+end_program basic_static_init

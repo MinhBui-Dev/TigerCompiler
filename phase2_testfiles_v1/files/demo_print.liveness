@@ -1,0 +1,17 @@
+Liveness of function printout:
+Block 0:
+   IN: [_1_x, , _1_z, _1_y]   OUT: [, _1_z, _1_y]		call, printi, _1_x
+   IN: [, _1_z, _1_y]   OUT: [, _1_z]		call, printi, _1_y
+   IN: [, _1_z]   OUT: []		call, printi, _1_z
+   IN: []   OUT: []		return, , ,
+
+Liveness of function main:
+Block 0:
+   IN: []   OUT: [_3_a]		assign, _3_a, 10,
+   IN: [_3_a]   OUT: [_3_b, _3_a]		assign, _3_b, 20,
+   IN: [_3_b, _3_a]   OUT: [_t0, _3_b, _3_a]		mult, _3_a, 2, _t0
+   IN: [_t0, _3_b, _3_a]   OUT: [_t0, _3_b, _3_a, _t1]		sub, _3_b, _3_a, _t1
+   IN: [_t0, _3_b, _3_a, _t1]   OUT: [_t0, _t2, _t1]		add, _3_a, _3_b, _t2
+   IN: [_t0, _t2, _t1]   OUT: []		call, printout, _t0, _t1, _t2
+   IN: []   OUT: []		return, 0, ,
+

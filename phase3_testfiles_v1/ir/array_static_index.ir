@@ -1,0 +1,29 @@
+start_program array_static_index
+    static-int-list: _0_a[5], _0_i
+    static-float-list:
+
+start_function main
+    int main()
+    int-list: _t1, _t2
+    float-list:
+    main:
+    assign, _0_i, 0,
+    _L0:
+    brgt, _0_i, 4, _L1
+    add, _0_i, _0_i, _t1
+    array_store, _0_a, _0_i, _t1
+    add, _0_i, 1, _0_i
+    goto, _L0, ,
+    _L1:
+    assign, _0_i, 0,
+    _L2:
+    brgt, _0_i, 4, _L3
+    array_load, _t2, _0_a, _0_i
+    call, printi, _t2
+    add, _0_i, 1, _0_i
+    goto, _L2, ,
+    _L3:
+    return, 0, ,
+end_function main
+
+end_program array_static_index

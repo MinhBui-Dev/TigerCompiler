@@ -1,0 +1,30 @@
+start_program demo_print
+    static-int-list:
+    static-float-list:
+
+start_function printout
+    void printout(int _1_x, int _1_y, int _1_z)
+    int-list: _1_x, _1_y, _1_z
+    float-list:
+    printout:
+    call, printi, _1_x
+    call, printi, _1_y
+    call, printi, _1_z
+    return, , ,
+end_function printout
+
+start_function main
+    int main()
+    int-list: _3_a, _3_b, _t1, _t2, _t3
+    float-list:
+    main:
+    assign, _3_a, 10,
+    assign, _3_b, 20,
+    mult, _3_a, 2, _t1
+    sub, _3_b, _3_a, _t2
+    add, _3_a, _3_b, _t3
+    call, printout, _t1, _t2, _t3
+    return, 0, ,
+end_function main
+
+end_program demo_print

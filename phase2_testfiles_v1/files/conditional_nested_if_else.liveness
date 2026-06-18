@@ -1,0 +1,90 @@
+Liveness of function main:
+Block 0:
+   IN: []   OUT: [_2_a]		assign, _2_a, 1,
+   IN: [_2_a]   OUT: [_2_b, _2_a]		assign, _2_b, 2,
+   IN: [_2_b, _2_a]   OUT: [_2_c, _2_b, _2_a]		assign, _2_c, 3,
+   IN: [_2_c, _2_b, _2_a]   OUT: [_2_d, _2_c, _2_b, _2_a]		assign, _2_d, 4,
+   IN: [_2_d, _2_c, _2_b, _2_a]   OUT: [_2_d, _t0, _2_c, _2_b, _2_a]		assign, _t0, 1,
+   IN: [_2_d, _t0, _2_c, _2_b, _2_a]   OUT: [_2_d, _t0, _2_c, _2_a]		brgt, _2_a, _2_b, _L2
+
+Block 1:
+   IN: [_2_d, _t0, _2_c, _2_a]   OUT: [_2_d, _t0, _2_c, _2_a]	_L2:
+   IN: [_2_d, _t0, _2_c, _2_a]   OUT: [_2_d, _t0, _2_c, _t1, _2_a]		assign, _t1, 0,
+   IN: [_2_d, _t0, _2_c, _t1, _2_a]   OUT: [_2_d, _2_c, _2_a]		breq, _t0, _t1, _L0
+
+Block 2:
+   IN: [_2_d, _2_c, _2_a]   OUT: [_2_d, _t0, _2_c, _2_a]		assign, _t0, 0,
+
+Block 3:
+   IN: [_2_d, _2_c, _2_a]   OUT: [_2_d, _2_c, _2_a]	_L0:
+   IN: [_2_d, _2_c, _2_a]   OUT: [_2_d, _2_c, _2_a, _t4]		assign, _t4, 1,
+   IN: [_2_d, _2_c, _2_a, _t4]   OUT: [_2_d, _t4, _2_a]		brlt, _2_a, _2_c, _L8
+
+Block 4:
+   IN: [_2_c, _2_a]   OUT: [_2_c, _t2, _2_a]		assign, _t2, 1,
+   IN: [_2_c, _t2, _2_a]   OUT: [_t2]		brgt, _2_a, _2_c, _L5
+
+Block 5:
+   IN: [_t2]   OUT: [_t2]	_L5:
+   IN: [_t2]   OUT: [_t2, _t3]		assign, _t3, 0,
+   IN: [_t2, _t3]   OUT: []		breq, _t2, _t3, _L3
+
+Block 6:
+   IN: []   OUT: [_t2]		assign, _t2, 0,
+
+Block 7:
+   IN: []   OUT: []	_L3:
+   IN: []   OUT: [_2_result]		assign, _2_result, 2,
+
+Block 8:
+   IN: []   OUT: [_2_result]		assign, _2_result, 1,
+   IN: [_2_result]   OUT: [_2_result]		goto, _L4, ,
+
+Block 9:
+   IN: [_2_result]   OUT: [_2_result]	_L4:
+   IN: [_2_result]   OUT: [_2_result]		goto, _L1, ,
+
+Block 10:
+   IN: [_2_result]   OUT: [_2_result]	_L1:
+   IN: [_2_result]   OUT: []		call, printi, _2_result
+   IN: []   OUT: []		return, 0, ,
+
+Block 11:
+   IN: [_2_d, _t4, _2_a]   OUT: [_2_d, _t4, _2_a]	_L8:
+   IN: [_2_d, _t4, _2_a]   OUT: [_t5, _2_d, _t4, _2_a]		assign, _t5, 0,
+   IN: [_t5, _2_d, _t4, _2_a]   OUT: [_2_d, _2_a]		breq, _t4, _t5, _L6
+
+Block 12:
+   IN: [_2_d, _2_a]   OUT: [_2_d, _t4, _2_a]		assign, _t4, 0,
+
+Block 13:
+   IN: []   OUT: []	_L6:
+   IN: []   OUT: [_2_result]		assign, _2_result, 16,
+
+Block 14:
+   IN: [_2_d, _2_a]   OUT: [_t6, _2_d, _2_a]		assign, _t6, 1,
+   IN: [_t6, _2_d, _2_a]   OUT: [_t6]		brgeq, _2_a, _2_d, _L11
+
+Block 15:
+   IN: [_t6]   OUT: [_t6]	_L11:
+   IN: [_t6]   OUT: [_t6, _t7]		assign, _t7, 0,
+   IN: [_t6, _t7]   OUT: []		breq, _t6, _t7, _L9
+
+Block 16:
+   IN: []   OUT: [_t6]		assign, _t6, 0,
+
+Block 17:
+   IN: []   OUT: []	_L9:
+   IN: []   OUT: [_2_result]		assign, _2_result, 8,
+
+Block 18:
+   IN: []   OUT: [_2_result]		assign, _2_result, 4,
+   IN: [_2_result]   OUT: [_2_result]		goto, _L10, ,
+
+Block 19:
+   IN: [_2_result]   OUT: [_2_result]	_L10:
+   IN: [_2_result]   OUT: [_2_result]		goto, _L7, ,
+
+Block 20:
+   IN: [_2_result]   OUT: [_2_result]	_L7:
+

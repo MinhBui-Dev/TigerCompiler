@@ -1,0 +1,25 @@
+start_program loop_for
+    static-int-list:
+    static-float-list:
+
+start_function main
+    int main()
+    int-list: _2_i, _3_j, _t1, _t2, _t3
+    float-list:
+    main:
+    assign, _2_i, 1,
+    _L0:
+    brgt, _2_i, 4, _L1
+    assign, _3_j, 1,
+    mult, _2_i, _2_i, _t1
+    mult, _t1, _3_j, _t2
+    call, printi, _t2
+    add, _3_j, 1, _t3
+    assign, _3_j, _t3,
+    add, _2_i, 1, _2_i
+    goto, _L0, ,
+    _L1:
+    return, 0, ,
+end_function main
+
+end_program loop_for

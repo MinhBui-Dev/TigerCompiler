@@ -1,0 +1,39 @@
+start_program loop_nested_break
+    static-int-list:
+    static-float-list:
+
+start_function main
+    int main()
+    int-list: _2_i, _2_j, _t1, _t2, _t3, _t4
+    float-list:
+    main:
+    assign, _2_i, 1,
+    _L0:
+    brgt, _2_i, 5, _L1
+    assign, _2_j, 5,
+    _L2:
+    assign, _t1, 1,
+    brgt, _2_j, 0, _L4
+    assign, _t1, 0,
+    _L4:
+    breq, _t1, 0, _L3
+    assign, _t2, 1,
+    breq, _2_i, _2_j, _L6
+    assign, _t2, 0,
+    _L6:
+    breq, _t2, 0, _L5
+    goto, _L3, ,
+    _L5:
+    mult, _2_i, _2_j, _t3
+    call, printi, _t3
+    sub, _2_j, 1, _t4
+    assign, _2_j, _t4,
+    goto, _L2, ,
+    _L3:
+    add, _2_i, 1, _2_i
+    goto, _L0, ,
+    _L1:
+    return, 0, ,
+end_function main
+
+end_program loop_nested_break
